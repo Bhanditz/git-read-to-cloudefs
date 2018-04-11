@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
-
+import org.eclipse.jgit.revwalk.RevWalk;
 
 class GitReadToCloudEFS {
 
@@ -26,6 +26,11 @@ class GitReadToCloudEFS {
   fun stuff() {
     // Open repo. We assume the cwd is in the git directory we are to stream from.
     var repo = FileRepositoryBuilder().readEnvironment().findGitDir().build();
+    var refs = repo.getAllRefs();
+    var revWalk = RevWalk(repo);
+    for((key, ref) in refs) {
+      revWalk.markStart(revWalk.parseCommit(ref.getObjectId()));
+    }
   }
 
 }
