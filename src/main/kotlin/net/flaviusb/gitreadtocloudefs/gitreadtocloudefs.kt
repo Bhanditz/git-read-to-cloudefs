@@ -69,9 +69,16 @@ class GitReadToCloudEFS {
     }
     val sorterater = sortify(child, parent);
     all_commits.sortWith(sorterater);
-    // We use an array for the commit order because that provides us an implicit foreign key (the index) for motching with the cloudEFS version hash
+    // We use an array for the commit order because that provides us an implicit foreign key (the index) for matching with the cloudEFS version hash
     val commit_order: Array<String> = all_commits.toTypedArray();
     //var cloudEfsHash: Array<...?> = arrayOfNulls(all_commits.size)
+    val emptySet: MutableSet<String> = mutableSetOf<String>()
+    for((index, commit) in commit_order.withIndex()) {
+      // Set the current branch to the first parent branch, if we have a parent fo rthe current commit
+      if (parent.getOrDefault(commit, emptySet).size > 0) {
+      } else {
+      }
+    }
   }
 
   fun sortify(lt: Map<String, Set<String>>, gt: Map<String, Set<String>>): Comparator<String> {
