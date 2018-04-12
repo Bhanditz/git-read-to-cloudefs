@@ -9,6 +9,20 @@ import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.revwalk.RevCommit;
 
+import kotlinx.coroutines.experimental.newSingleThreadContext
+import kotlinx.coroutines.experimental.runBlocking
+import org.fejoa.AccountIO
+import org.fejoa.FejoaContext
+import org.fejoa.UserData
+import org.fejoa.crypto.CryptoSettings
+import org.fejoa.crypto.generateSecretKeyData
+import org.fejoa.fs.fusejnr.FejoaFuse
+import org.fejoa.fs.fusejnr.Utils
+import org.fejoa.storage.StorageDir
+import org.fejoa.support.StorageLib
+import org.fejoa.support.StreamHelper
+import org.fejoa.support.toInStream
+
 class GitReadToCloudEFS {
 
   /*
