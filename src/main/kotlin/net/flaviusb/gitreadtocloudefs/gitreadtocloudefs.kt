@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.IOException;
 
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.revwalk.RevWalk;
+import org.eclipse.jgit.revwalk.RevCommit;
 
 class GitReadToCloudEFS {
 
@@ -32,12 +34,30 @@ class GitReadToCloudEFS {
       revWalk.markStart(revWalk.parseCommit(ref.getObjectId()));
     }
     // So, we create two maps here; a hash -> Set(child hashes), and a hash -> Set(parent hashes)
-    // What we want is a sorted list of hashes, where anything wh
+    var parent: MutableMap<String, MutableSet<String>> = mutableMapOf()
+    var child: MutableMap<String, MutableSet<String>> = mutableMapOf()
+    var all_commits: MutableList<String> = mutableListOf()
     for (commit in revWalk) {
+      val own_hash = ObjectId.toString(commit.getId())
+      all_commits.add(own_hash)
+      val parents: Array<RevCommit> = commit.getParents().clone()
+      val parent_hashes: MutableSet<String> = parents.map({c: RevCommit -> ObjectId.toString(c.getId()) }).toMutableSet()
+      parent.put(own_hash, parent_hashes)
+      for(p in parent_hashes) {
+        var c = child.get(p)
+        if(c != null) {
+          c.add(own_hash)
+          child.put(p, c)
+        } else {
+          child.put(p, mutableSetOf(own_hash))
+        }
+      }
     }
+    val sorterater = sortify(child, parent);
+    all_commits.sortWith(sorterater);
   }
 
-  fun sort(lt: Map<String, Set<String>>, gt: Map<String, Set<String>>): Comparator<String> {
+  fun sortify(lt: Map<String, Set<String>>, gt: Map<String, Set<String>>): Comparator<String> {
     val foo : Set<String> = arrayOf<String>().toSet();
     return object : Comparator<String> {
       override fun compare(l: String, r: String): Int = if (lt.getOrDefault(l, foo).contains(r)) { -1 } else if (gt.getOrDefault(l, foo).contains(r)) { +1 } else { 0 }
