@@ -22,6 +22,11 @@ import org.fejoa.storage.StorageDir
 import org.fejoa.support.StorageLib
 import org.fejoa.support.StreamHelper
 import org.fejoa.support.toInStream
+import org.fejoa.crypto.*
+import org.fejoa.repository.*
+import org.fejoa.storage.*
+import org.fejoa.support.*
+import org.fejoa.chunkcontainer.*
 
 class GitReadToCloudEFS {
 
@@ -72,10 +77,16 @@ class GitReadToCloudEFS {
     // We use an array for the commit order because that provides us an implicit foreign key (the index) for matching with the cloudEFS version hash
     val commit_order: Array<String> = all_commits.toTypedArray();
     //var cloudEfsHash: Array<...?> = arrayOfNulls(all_commits.size)
+    // Set up the cloudEFS repository
+    // Lots of copy-paste from fejoa test files
+    val repo_efs = runBlocking { createRepo("cloudEFSbenchmark", "fromGit") }
+
+    // For each changeset in the sorted set...
     val emptySet: MutableSet<String> = mutableSetOf<String>()
     for((index, commit) in commit_order.withIndex()) {
       // Set the current branch to the first parent branch, if we have a parent fo rthe current commit
       if (parent.getOrDefault(commit, emptySet).size > 0) {
+        // Choose the first parent
       } else {
       }
     }
@@ -87,4 +98,42 @@ class GitReadToCloudEFS {
       override fun compare(l: String, r: String): Int = if (lt.getOrDefault(l, foo).contains(r)) { -1 } else if (gt.getOrDefault(l, foo).contains(r)) { +1 } else { 0 }
     }
   }
+
+  // Helper functions taken from ChunkContainerTestBase.kt
+  protected var settings = CryptoSettings.default
+  protected var secretKey: SecretKey? = null
+  protected var storageBackend: StorageBackend? = null
+  protected suspend fun prepareStorage(dirName: String, name: String): StorageBackend.BranchBackend {
+    return storageBackend?.let {
+        val branchBackend = if (it.exists(dirName, name))
+            it.open(dirName, name)
+        else {
+            it.create(dirName, name)
+        }
+        //cleanUpList.add(dirName)
+        return@let branchBackend
+    } ?: throw Exception("storageBackend should not be null")
+  }
+  protected fun getRepoConfig(): RepositoryConfig {
+    val seed = ByteArray(10) // just some zeros
+    val hashSpec = HashSpec.createCyclicPoly(HashSpec.HashType.FEJOA_CYCLIC_POLY_2KB_8KB, seed)
+
+    val boxSpec = BoxSpec(
+            encInfo = BoxSpec.EncryptionInfo(BoxSpec.EncryptionInfo.Type.PARENT),
+            zipType = BoxSpec.ZipType.DEFLATE,
+            zipBeforeEnc = true
+    )
+
+    return RepositoryConfig(
+            hashSpec = hashSpec,
+            boxSpec = boxSpec
+    )
+  }
+  // Helper functions taken from RepositoryTestBase.kt
+  protected suspend fun createRepo(dirName: String, branch: String, init: Boolean = true): org.fejoa.repository.Repository {
+    val storage = prepareStorage(dirName, branch)
+    return org.fejoa.repository.Repository.create(branch, storage, getRepoConfig(),
+            SecretKeyData(secretKey!!, settings.symmetric.algo), init)
+  }
+
 }
