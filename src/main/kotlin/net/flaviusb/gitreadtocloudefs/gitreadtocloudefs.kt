@@ -31,6 +31,16 @@ class GitReadToCloudEFS {
     for((key, ref) in refs) {
       revWalk.markStart(revWalk.parseCommit(ref.getObjectId()));
     }
+    // So, we create two maps here; a hash -> Set(child hashes), and a hash -> Set(parent hashes)
+    // What we want is a sorted list of hashes, where anything wh
+    for (commit in revWalk) {
+    }
   }
 
+  fun sort(lt: Map<String, Set<String>>, gt: Map<String, Set<String>>): Comparator<String> {
+    val foo : Set<String> = arrayOf<String>().toSet();
+    return object : Comparator<String> {
+      override fun compare(l: String, r: String): Int = if (lt.getOrDefault(l, foo).contains(r)) { -1 } else if (gt.getOrDefault(l, foo).contains(r)) { +1 } else { 0 }
+    }
+  }
 }
