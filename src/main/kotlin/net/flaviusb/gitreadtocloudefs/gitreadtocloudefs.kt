@@ -106,17 +106,19 @@ class GitReadToCloudEFS {
         runBlocking { repo_efs.remove(file) }
       }
       // For each file in the git commit, add it to the current cloudefs commit
-      val file_tree = RevWalk(repo).parseCommit(ObjectId.fromString(commit)).getTree()
-      var files = mutableListOf<String>()
+      val rev_commit = RevWalk(repo).parseCommit(ObjectId.fromString(commit))
+      val file_tree = rev_commit.getTree()
       var tree_walk = TreeWalk(repo)
       tree_walk.addTree(file_tree)
       tree_walk.setRecursive(false)
       tree_walk.setPostOrderTraversal(false)
       while(tree_walk.next()) {
-        files.add(tree_walk.getPathString())
+        val filename = tree_walk.getPathString()
+        val loader = repo.open(tree_walk.getObjectId(0))
+        runBlocking { repo_efs.putBytes(filename, loader.getBytes()) }
       }
-
-      val my_hash = runBlocking {repo_efs.getHeadCommit()?.getHash()};
+      val my_hash = runBlocking { repo_efs.commit(rev_commit.getFullMessage().toByteArray(), null) }
+      //val my_hash = runBlocking {repo_efs.getHeadCommit()?.getHash()};
       cloudEfsHash[index] = my_hash;
     }
   }
