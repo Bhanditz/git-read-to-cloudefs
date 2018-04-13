@@ -89,8 +89,13 @@ class GitReadToCloudEFS {
       val par = parent.getOrDefault(commit, emptySet);
       if (par.size > 0) {
         // Choose the first parent
-        par.toTypedArray().get(0)
-        //repo_efs.setHeadCommit(cloudEfsHash[
+        val parent_index_str = par.toTypedArray().get(0)
+        if(parent_index_str != null) {
+          val thing = cloudEfsHash[index_commit_order.getOrDefault(parent_index_str, -1)]
+          if (thing != null) {
+            runBlocking { repo_efs.setHeadCommit(thing) }
+          }
+        }
       } else {
         
       }
