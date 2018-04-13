@@ -8,6 +8,7 @@ import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.treewalk.TreeWalk;
 
 import kotlinx.coroutines.experimental.newSingleThreadContext
 import kotlinx.coroutines.experimental.runBlocking
@@ -99,6 +100,22 @@ class GitReadToCloudEFS {
       } else {
         
       }
+      // First, delete everything
+      val file_listing = runBlocking { repo_efs.listFiles("/") }
+      for (file in file_listing) {
+        runBlocking { repo_efs.remove(file) }
+      }
+      // For each file in the git commit, add it to the current cloudefs commit
+      val file_tree = RevWalk(repo).parseCommit(ObjectId.fromString(commit)).getTree()
+      var files = mutableListOf<String>()
+      var tree_walk = TreeWalk(repo)
+      tree_walk.addTree(file_tree)
+      tree_walk.setRecursive(false)
+      tree_walk.setPostOrderTraversal(false)
+      while(tree_walk.next()) {
+        files.add(tree_walk.getPathString())
+      }
+
       val my_hash = runBlocking {repo_efs.getHeadCommit()?.getHash()};
       cloudEfsHash[index] = my_hash;
     }
