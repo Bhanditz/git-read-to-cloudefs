@@ -85,6 +85,9 @@ class GitReadToCloudEFS {
     var cloudEfsHash: Array<org.fejoa.storage.Hash?> = arrayOfNulls(all_commits.size)
     // Set up the cloudEFS repository
     // Lots of copy-paste from fejoa test files
+    secretKey = runBlocking { CryptoHelper.crypto.generateSymmetricKey(settings.symmetric) }
+    storageBackend = platformCreateStorage("")
+
     val repo_efs = runBlocking { createRepo("cloudEFSbenchmark", "fromGit") }
 
     // For each changeset in the sorted set...
