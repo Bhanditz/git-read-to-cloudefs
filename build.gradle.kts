@@ -6,13 +6,13 @@ plugins {
 }
 
 application {
-    mainClassName = "net.flaviusb.gitreadtocloudefs.GitreadTocloudefsKt"
+    mainClassName = "net.flaviusb.gitreadtocloudefs.GitreadtocloudefsKt"
 }
 
 tasks.withType<Jar> {
   manifest {
     attributes(mapOf(
-                "Main-Class" to "net.flaviusb.gitreadtocloudefs.GitreadTocloudefsKt"
+                "Main-Class" to "net.flaviusb.gitreadtocloudefs.GitreadtocloudefsKt"
     ))
   }
 }
