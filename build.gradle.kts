@@ -43,6 +43,8 @@ dependencies {
     compile("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version")
     compile("org.jetbrains.kotlinx:kotlinx-gradle-serialization-plugin:$serialization_version")
     compile("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$serialization_version")
+    compile("org.apache.httpcomponents:httpmime:4.3.5")
+    compile("org.bouncycastle:bcprov-jdk15on:1.59")
 }
 
 kotlin {
