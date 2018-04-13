@@ -45,6 +45,7 @@ dependencies {
     compile("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$serialization_version")
     compile("org.apache.httpcomponents:httpmime:4.3.5")
     compile("org.bouncycastle:bcprov-jdk15on:1.59")
+    compile("org.xerial:sqlite-jdbc:3.21.0.1")
 }
 
 kotlin {
