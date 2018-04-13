@@ -76,7 +76,8 @@ class GitReadToCloudEFS {
     all_commits.sortWith(sorterater);
     // We use an array for the commit order because that provides us an implicit foreign key (the index) for matching with the cloudEFS version hash
     val commit_order: Array<String> = all_commits.toTypedArray();
-    //var cloudEfsHash: Array<...?> = arrayOfNulls(all_commits.size)
+    val index_commit_order: Map<String, Int> = mapOf<String, Int>(*(commit_order.mapIndexed({a: Int, b: String -> b to a}).toTypedArray()));
+    var cloudEfsHash: Array<org.fejoa.storage.Hash?> = arrayOfNulls(all_commits.size)
     // Set up the cloudEFS repository
     // Lots of copy-paste from fejoa test files
     val repo_efs = runBlocking { createRepo("cloudEFSbenchmark", "fromGit") }
@@ -84,11 +85,17 @@ class GitReadToCloudEFS {
     // For each changeset in the sorted set...
     val emptySet: MutableSet<String> = mutableSetOf<String>()
     for((index, commit) in commit_order.withIndex()) {
-      // Set the current branch to the first parent branch, if we have a parent fo rthe current commit
-      if (parent.getOrDefault(commit, emptySet).size > 0) {
+      // Set the current branch to the first parent branch, if we have a parent for the current commit
+      val par = parent.getOrDefault(commit, emptySet);
+      if (par.size > 0) {
         // Choose the first parent
+        par.toTypedArray().get(0)
+        //repo_efs.setHeadCommit(cloudEfsHash[
       } else {
+        
       }
+      val my_hash = runBlocking {repo_efs.getHeadCommit()?.getHash()};
+      cloudEfsHash[index] = my_hash;
     }
   }
 
