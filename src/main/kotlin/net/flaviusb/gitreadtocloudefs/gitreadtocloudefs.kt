@@ -29,6 +29,10 @@ import org.fejoa.storage.*
 import org.fejoa.support.*
 import org.fejoa.chunkcontainer.*
 
+fun main(args: Array<String>) {
+  val thing = GitReadToCloudEFS()
+  thing.stuff()
+}
 class GitReadToCloudEFS {
 
   /*

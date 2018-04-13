@@ -6,7 +6,7 @@ plugins {
 }
 
 application {
-    mainClassName = "net.flaviusb.gitreadtocloudefs.GitReadToCloudEFS"
+    mainClassName = "net.flaviusb.gitreadtocloudefs.GitreadTocloudefsKt"
 }
 
 group = "net.flaviusb"
