@@ -9,6 +9,14 @@ application {
     mainClassName = "net.flaviusb.gitreadtocloudefs.GitreadTocloudefsKt"
 }
 
+tasks.withType<Jar> {
+  manifest {
+    attributes(mapOf(
+                "Main-Class" to "net.flaviusb.gitreadtocloudefs.GitreadTocloudefsKt"
+    ))
+  }
+}
+
 group = "net.flaviusb"
 
 version = "0.0.1"
