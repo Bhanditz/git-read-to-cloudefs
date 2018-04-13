@@ -1,6 +1,6 @@
 Attempt at reading directly from a git repository to cloudEFS.
 
-#Building
+# Building
 
 To build, you will first need to build and package fejoa.
 
