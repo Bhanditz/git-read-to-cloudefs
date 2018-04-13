@@ -23,6 +23,9 @@ version = "0.0.1"
 
 repositories {
     jcenter()
+    mavenCentral()
+    maven(url="http://dl.bintray.com/kotlin/kotlin-eap")
+    maven(url="https://kotlin.bintray.com/kotlinx")
 }
 val kotlinVersion = "1.2.30"
 val coroutines_version = "0.21.1"
@@ -38,6 +41,8 @@ dependencies {
     compile(fileTree("unmanaged_jars"))
     compile(kotlin("reflect", kotlinVersion))
     compile("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version")
+    compile("org.jetbrains.kotlinx:kotlinx-gradle-serialization-plugin:$serialization_version")
+    compile("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$serialization_version")
 }
 
 kotlin {
