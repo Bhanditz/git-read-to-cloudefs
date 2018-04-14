@@ -17,8 +17,6 @@ import org.fejoa.FejoaContext
 import org.fejoa.UserData
 import org.fejoa.crypto.CryptoSettings
 import org.fejoa.crypto.generateSecretKeyData
-import org.fejoa.fs.fusejnr.FejoaFuse
-import org.fejoa.fs.fusejnr.Utils
 import org.fejoa.storage.StorageDir
 import org.fejoa.support.StorageLib
 import org.fejoa.support.StreamHelper
